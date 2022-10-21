@@ -48,7 +48,7 @@ function Seriados() {
         .then(response => response.json())
         .then(data => console.log(data));
 
-        fetch('https://backendkayoga-production.up.railway.app/getSeriados')
+        fetch('https://yts.lt/api/v2/list_movies.json')
         .then(response => response.json())
         .then(data => console.log(data));
             
