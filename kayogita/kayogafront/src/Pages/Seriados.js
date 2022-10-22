@@ -16,39 +16,59 @@ import {
   MenuItem,
   FormGroup,
   FormControl,
+  Divider,
   FormControlLabel,
 } from '@mui/material';
 
 
-function Seriados() {
+const Seriados=()=> {
 
-    const [formSeriado, setFormSeriado] = useState([{
-    values:{
+    const [formSeriado, setFormSeriado] = useState({
+    
         talla1:'',
         talla2:'',
         talla3:'',
         talla4:'',
-    }}]);
+        metraje: '',
+        color:'',
+        descripcion:'',
+        garibaldi:false,
+        contrafuerte:false,
+        etiquetas:false,
+        estado: 'Cortado',
+    });
 
+    function handleChangeCheckBox(e){
+        const name = e.target.name;
+        const value = e.target.checked;
+        setFormSeriado((prev)=>{
+            return {...prev, [name]:value};
+        });
+
+    }
     function handleChange(e) {
-        const { name, value } = e.target;
-        setFormSeriado({
-          values: {
-            ...formSeriado.values,
-            [name]: value,
-          },
-        })
+
+        const name = e.target.name;
+        const value = e.target.value;
+        console.log(e.target.value);
+        setFormSeriado((prev)=>{
+            return {...prev, [name]:value};
+        });
+
       }
     function handleSubmit(e){
         e.preventDefault()
-        const values = JSON.stringify(formSeriado.values)
+        const values = JSON.stringify(formSeriado)
         alert(values);
+       
 
-        fetch('https://jsonplaceholder.typicode.com/todos/1')
-        .then(response => response.json())
-        .then(data => console.log(data));
-
-        fetch('https://yts.lt/api/v2/list_movies.json')
+        fetch('http://localhost:4000/postSeriados',{
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            body: JSON.stringify(formSeriado),
+        })
         .then(response => response.json())
         .then(data => console.log(data));
             
@@ -56,7 +76,6 @@ function Seriados() {
     
 
     
-    const { talla1,talla2,talla3,talla4 } = formSeriado.values;
 
     return (
         
@@ -68,49 +87,83 @@ function Seriados() {
             <form onSubmit={handleSubmit}>
             <Paper style ={{padding:20 }} >
                 <Grid container alignItems="flex-start" spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid item xs={3}>
                         <TextField
-                            name="email"
+                            name="metraje"
+                            value={formSeriado.metraje}
+                            onChange={handleChange}
                             fullWidth
-                            multiline
                             type="number"
-                            label="Descripción"
+                            label="Metraje"
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
+                            name="color"
+                            value={formSeriado.color}
+                            onChange={handleChange}
+                            fullWidth
+                            type="string"
+                            label="Color"
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            name="descripcion"
+                            value={formSeriado.descripcion}
+                            onChange={handleChange}
+                            fullWidth
+                            multiline
+                            type="string"
+                            label="Descripcion"
+                        />
+                    </Grid>
+                    {/* Seccion Checkbox  */}
+                    <Grid item xs={6}>
+                        <FormControlLabel control={<Checkbox checked={formSeriado.garibaldi} name="garibaldi" onChange={handleChangeCheckBox} />} label="Garibaldi" />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormControlLabel control={<Checkbox checked={formSeriado.contrafuerte} name="contrafuerte" onChange={handleChangeCheckBox} />} label="Contrafuerte" />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <FormControlLabel control={<Checkbox  checked={formSeriado.etiquetas} name="etiquetas" onChange={handleChangeCheckBox} />} label="Etiquetas" />
+                    </Grid>
+                    {/* Seccion Seriado */}
+                    
+                    <Grid item xs={3}>
+                        <TextField
                             name="talla1"
-                            value={talla1}
+                            value={formSeriado.talla1}
                             onChange={handleChange}
                             fullWidth
                             type="number"
-                            label="Talla"
+                            label="Talla 1"
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
                             name="talla2"
-                            value={talla2}
+                            value={formSeriado.talla2}
                             onChange={handleChange}
                             fullWidth
                             type="number"
-                            label="Talla"
+                            label="Talla 2"
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
                             name="talla3"
-                            value={talla3}
+                            value={formSeriado.talla3}
                             onChange={handleChange}
                             fullWidth
                             type="number"
-                            label="Talla"
+                            label='Talla 3'
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
                             name="talla4"
-                            value={talla4}
+                            value={formSeriado.talla4}
                             onChange={handleChange}                        
                             fullWidth
                             type="number"
