@@ -62,7 +62,7 @@ const Seriados=()=> {
         alert(values);
        
         //For Production
-        fetch('http://backendkayoga-production.up.railway.app/postSeriados',{
+        fetch('https://backendkayoga-production.up.railway.app/postSeriados',{
         //For Develop
         //fetch('http://localhost:4000/postSeriados',{
             headers: {
