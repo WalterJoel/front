@@ -61,8 +61,10 @@ const Seriados=()=> {
         const values = JSON.stringify(formSeriado)
         alert(values);
        
-
-        fetch('http://localhost:4000/postSeriados',{
+        //For Production
+        fetch('backendkayoga-production.up.railway.app',{
+        //For Develop
+        //fetch('http://localhost:4000/postSeriados',{
             headers: {
                 'Content-Type': 'application/json'
               },
