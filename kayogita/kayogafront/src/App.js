@@ -13,7 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" component={<HomePage/>}>
-          <Route index element={<HomePage />} />
+          <Route index element={<HomePage/>} />
           <Route path="Seriados" element={<Seriados />} />
           <Route path="ListLotesPage" element={<ListLotesPage />} />
           <Route path="DetailLotesPage/:idLote" element={<DetailLotesPage />} />
