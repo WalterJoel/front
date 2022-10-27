@@ -2,30 +2,101 @@ import React,{useEffect,useState} from "react";
 import {useParams } from 'react-router-dom';
 import {tallasDamaJson,tallasNinoJson,tallasVaronJson} from '../Elements/TallasGeneralJson';
 
-import TitleComponent from "../Components/TitleComponent";
-import {FormControl,InputLabel,Divider,MenuItem,TextField,List,ListItem,ListItemText,Card,CardContent,Typography,Grid, Paper, Select} from '@mui/material';
-import SelectDisplayComponent from "../Components/SelectDisplayComponent";
-import InputSeriadoComponent from "../Components/InputSeriadoComponent";
+import {Autocomplete,Divider,MenuItem,TextField,List,ListItem,ListItemText,Button,Box,Typography,Grid, Paper, Select} from '@mui/material';
 
 const DetailLotesPage =() => {
+    //Obtengo el ID que viene de otro Page
     let {idLote}  = useParams();
-    console.log('IDLOTE',idLote);
     const [detalleLote,SetDetalleLote] = useState([]);
     const [aparadores,SetAparadores] = useState([]);
     const [a,SetA]=useState('');
     const [talla,setTallas]=useState({});
-
-    
+    //Estados para la busqueda
+    const[modelos,setModelos] = useState([]);
+    //Estado para formulario
+    const[formUpdateLote,setFormUpdateLote] = useState({
+        idmodelo:'',
+        idaparador:''
+    })
+    //Funcion para la busqueda de modelos
+    const peticionModelos=async()=>{
+        const url = 'http://localhost:4000/getAllModelosBySerieAndColor/'+ 'dama';
+        await fetch(url,{
+        //await fetch('https://backendkayoga-production.up.railway.app/getAllModelos',{
+            headers: {
+                'Content-Type': 'application/json'
+              },
+        })
+        .then(function  (response) {
+            if(response.ok){
+                console.log('response',response);
+                const promesa = response.json();
+                promesa.then(function (modelo){
+                    console.log('modelo',modelo);
+                    setModelos(modelo);
+                })
+            }
+            else{
+                console.log('algo esta mal al traer los modelos')
+            }
+        })
+        .catch(()=> console.log('Algo salio mal al requerir modelos'))
+    }
     //Funcion para cambiar el valor del Select
     const handleChangeSelect = (event) => {
-        const aparador =event.target.value;
-        SetA(aparador);
+        const value =event.target.value;
+        const name = event.target.name;
+        console.log('names',name,value);
+        setFormUpdateLote((prev)=>{
+            return {...prev, [name]:value};
+        });
     };
+        //Para los cambios de campos normales
+    function handleChangeModelos(e) {
+        const value = e.target.value;
+        //Debido a que autocomplete no tiene como tal un Name, me obligo a setear a mano
+        const name = 'idmodelo';
+        console.log('valuechanged',e.target.value);
+        setFormUpdateLote((prev)=>{
+            return {...prev, [name]:value};
+        });
+    }
+    
     function handleSubmit(e){
         e.preventDefault()
+        const values = JSON.stringify(formUpdateLote);
+        console.log('mando',values)
+        //alert(formUpdateLote);
+        alert('Estas seguro de enviar la informacion?');
+       /*
+        //For Production
+        fetch('https://backendkayoga-production.up.railway.app/postSeriados',{
+        */
+        //For Develop
+        //id lote param es el id que se envia cuando viene de lotesListPage
+        const url= 'http://localhost:4000/updateLoteById/' + idLote;
+        console.log('id param',idLote)
+        fetch(url,{
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            method: 'PUT', // *GET, POST, PUT, DELETE, etc.
+            body: JSON.stringify(formUpdateLote),
+        })
+        .then(function(response) {
+            if(response.ok) {
+                console.log('all good')
+            } else {
+              console.log('Respuesta de red OK pero respuesta HTTP no OK');
+            }
+          })
+          .catch(function(error) {
+            console.log('Hubo un problema con la petición Fetch:' + error.message);
+          });     
 
     }
     useEffect(() =>{
+        peticionModelos();
         //Obtengo informacion sobre el lote
         const url='https://backendkayoga-production.up.railway.app/getLoteById/'+idLote;
         //const url='http://localhost:4000/getLoteById/'+idLote;
@@ -124,7 +195,7 @@ const DetailLotesPage =() => {
                     </Paper>
                 </Grid>
             </Grid>
-                <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
             <Grid  container flexWrap='wrap' justifyContent="center">
                 {/* Asignar Aparador */}
                 <Grid item  sx={{flexGrow:1 ,m:1}} >
@@ -135,7 +206,8 @@ const DetailLotesPage =() => {
                         <Select
                             labelId="demo-multiple-name-label"
                             id="demo-multiple-name"
-                            value={a}
+                            value = {formUpdateLote.idaparador}
+                            name = 'idaparador' 
                             onChange={handleChangeSelect}
                             >
                             {aparadores.map((apa,i) => (
@@ -155,20 +227,39 @@ const DetailLotesPage =() => {
                         <Typography variant='body1' sx={{padding:1,fontWeight:'bold'}}>
                             ASIGNAR MODELO  
                         </Typography>
-                        <List>
-                            <ListItem>
-                                <ListItemText primary="Lote" secondary={detalleLote.talla1} />
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla2} />
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla21} />
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla3} />
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla31} />    
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla4} />                                                                
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla41} />
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla5} />
-                                <ListItemText primary="Metraje" secondary={detalleLote.talla51} />
-                            </ListItem>
-                        </List>
+                        <Autocomplete
+                            disablePortal
+                            // el campo valor_concatenado viene de la consulta sql
+                            getOptionLabel={(option) => option.valor_concatenado}
+                            options={modelos}
+                            sx={{ width: 300 }}
+                            onChange={handleChangeModelos}
+                            renderOption={(props, option) => (
+                                <Box value={option.idmodelo} component="li" {...props} key={option.idmodelo}>
+                                {option.valor_concatenado}
+                                </Box>
+                            )}
+                            renderInput={(params) => <TextField  {...params} label="Buscar" />}
+                        />
+                        {/* <Autocomplete
+                            {...defaultProps}
+                            disablePortal
+                            id="combo-box-demo"
+                            //options={modelos}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => <TextField key={modelos.idmodelo} {...params} label="Buscar" />}
+                            /> */}
                     </Paper>
+                </Grid>
+
+                <Grid item xs={7}  style={{marginTop: 16 }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                        >
+                            Guardar
+                        </Button>
                 </Grid>
             </Grid>
             </form>
