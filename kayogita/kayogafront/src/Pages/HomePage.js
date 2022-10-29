@@ -48,7 +48,7 @@ export default function HomePage(props){
                     <HomeCardsComponent action='Aparadores' image={aparadorImage}/> 
                 </Grid>
                 <Grid item>
-                    <HomeCardsComponent action='Lotes' image={lotesImage} linkTo='/Seriados'/> 
+                    <HomeCardsComponent action='Lotes' image={lotesImage} linkTo='/InsertNewLotePage'/> 
                 </Grid>    
                 <Grid item>
                     <HomeCardsComponent action='Inyección' image={inyeccionImage} /> 

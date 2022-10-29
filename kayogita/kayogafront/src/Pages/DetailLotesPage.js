@@ -9,18 +9,20 @@ const DetailLotesPage =() => {
     let {idLote}  = useParams();
     const [detalleLote,SetDetalleLote] = useState([]);
     const [aparadores,SetAparadores] = useState([]);
-    const [a,SetA]=useState('');
     const [talla,setTallas]=useState({});
     //Estados para la busqueda
     const[modelos,setModelos] = useState([]);
     //Estado para formulario
     const[formUpdateLote,setFormUpdateLote] = useState({
         idmodelo:'',
-        idaparador:''
+        idaparador:'',
+        detalle_insumos_aparado:'...',
+        estado:'Aparado'
     })
     //Funcion para la busqueda de modelos
     const peticionModelos=async()=>{
-        const url = 'http://localhost:4000/getAllModelosBySerieAndColor/'+ 'dama';
+        console.log('probando ', detalleLote.serie)
+        const url = 'http://localhost:4000/getAllModelosBySerieAndColor/'+ detalleLote.serie;
         await fetch(url,{
         //await fetch('https://backendkayoga-production.up.railway.app/getAllModelos',{
             headers: {
@@ -51,22 +53,17 @@ const DetailLotesPage =() => {
             return {...prev, [name]:value};
         });
     };
-        //Para los cambios de campos normales
+    //Para los cambios de campos normales
     function handleChangeModelos(e) {
         const value = e.target.value;
         //Debido a que autocomplete no tiene como tal un Name, me obligo a setear a mano
         const name = 'idmodelo';
-        console.log('valuechanged',e.target.value);
         setFormUpdateLote((prev)=>{
             return {...prev, [name]:value};
         });
     }
-    
     function handleSubmit(e){
         e.preventDefault()
-        const values = JSON.stringify(formUpdateLote);
-        console.log('mando',values)
-        //alert(formUpdateLote);
         alert('Estas seguro de enviar la informacion?');
        /*
         //For Production
@@ -108,7 +105,6 @@ const DetailLotesPage =() => {
         .then(function(response){
             if(response.ok){
                 const promesa = response.json();
-                console.log('ok',promesa);
                 //Extraigo el resultado de la promesa
                 promesa.then(function(loteResult){
                     if(loteResult[0].serie==='nino'){
@@ -126,12 +122,9 @@ const DetailLotesPage =() => {
             }
             
         })
-        //.then(response => response.json())
-
         .catch(()=> console.log('Algo salio mal al requerir lotes cortados'));
 
         //Obtengo informacion sobre los aparadores
-        
         fetch('https://backendkayoga-production.up.railway.app/getAllAparadores',{
         //fetch('http://localhost:4000/getAllAparadores',{
             headers: {
@@ -143,8 +136,6 @@ const DetailLotesPage =() => {
         //Aqui daria error si no llega la promesa
         .then((aparador)=>SetAparadores(aparador))
         .catch((error)=> console.log('Algo salio mal al requerir aparadores'+ error.message));
-
-
     },[]);
     return(
         <div style={{padding:16, margin:'auto', maxWidth:1000}}>
@@ -159,12 +150,15 @@ const DetailLotesPage =() => {
                             <ListItem>
                                 <ListItemText primary="Lote" secondary={'# '+detalleLote.idlote} />
                                 <ListItemText primary="Metraje" secondary={detalleLote.metraje} />
+                                <ListItemText primary="Color" secondary={detalleLote.color} />
+                                <ListItemText primary="Serie" secondary={detalleLote.serie} />
                             </ListItem>
                             <Divider/>
 
                             <ListItem>
-                                <ListItemText primary="Color" secondary={detalleLote.color} />
+                                <ListItemText primary="Descripcion del Cortador" secondary={detalleLote.descripcion} />
                                 <ListItemText primary="Fecha de Corte" secondary={detalleLote.fecha_creacion} />
+                                <ListItemText primary="Estado" secondary={detalleLote.estado} />
                             </ListItem>
                             <Divider/>
                             <ListItem>
@@ -206,6 +200,7 @@ const DetailLotesPage =() => {
                         <Select
                             labelId="demo-multiple-name-label"
                             id="demo-multiple-name"
+                            required
                             value = {formUpdateLote.idaparador}
                             name = 'idaparador' 
                             onChange={handleChangeSelect}
@@ -225,7 +220,7 @@ const DetailLotesPage =() => {
                 <Grid item  sx={{flexGrow:2 ,m:1}} >
                     <Paper>
                         <Typography variant='body1' sx={{padding:1,fontWeight:'bold'}}>
-                            ASIGNAR MODELO  
+                            ASIGNA UN MODELO  
                         </Typography>
                         <Autocomplete
                             disablePortal
@@ -235,20 +230,28 @@ const DetailLotesPage =() => {
                             sx={{ width: 300 }}
                             onChange={handleChangeModelos}
                             renderOption={(props, option) => (
-                                <Box value={option.idmodelo} component="li" {...props} key={option.idmodelo}>
+                                <Box  value={option.idmodelo} component="li" {...props} key={option.idmodelo}>
                                 {option.valor_concatenado}
                                 </Box>
                             )}
-                            renderInput={(params) => <TextField  {...params} label="Buscar" />}
+                            renderInput={(params) => <TextField  {...params} required label="Buscar" />}
                         />
-                        {/* <Autocomplete
-                            {...defaultProps}
-                            disablePortal
-                            id="combo-box-demo"
-                            //options={modelos}
-                            sx={{ width: 300 }}
-                            renderInput={(params) => <TextField key={modelos.idmodelo} {...params} label="Buscar" />}
-                            /> */}
+                    </Paper>
+                </Grid>
+                <Grid item>
+                    <Paper>
+                        <Typography variant='body1' sx={{padding:1,fontWeight:'bold'}}>
+                           Agrega Detalles e insumos de Aparado  
+                        </Typography>
+                        <TextField
+                            name="detalle_insumos_aparado"
+                            value={formUpdateLote.detalle_insumos_aparado}
+                            onChange={handleChangeSelect}
+                            fullWidth
+                            multiline
+                            type="string"
+                            label="Descripcion"
+                        />
                     </Paper>
                 </Grid>
 

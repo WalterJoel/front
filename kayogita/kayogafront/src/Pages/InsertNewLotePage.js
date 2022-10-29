@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import HashLoader from "react-spinners/HashLoader";
 import { useNavigate } from 'react-router-dom';
 
-import HomePage from './HomePage'
 import React from "react";
-import { TextField, Checkbox, Radio, Select } from '@mui/material';
+import { TextField, Checkbox, Select } from '@mui/material';
 import {
   Typography,
   Paper,
@@ -12,17 +11,14 @@ import {
   Grid,
   Button,
   CssBaseline,
-  RadioGroup,
-  FormLabel,
   MenuItem,
-  FormGroup,
-  FormControl,
   FormControlLabel,
 } from '@mui/material';
 
+//Netamente informativo los JSON que traigo
 import {tallasDamaJson,tallasNinoJson,tallasVaronJson} from '../Elements/TallasGeneralJson';
 
-const Seriados=()=> {
+const InsertNewLotePage=()=> {
     const [validarStar,setValidarStar] = useState(false);
     let [loading, setLoading] = useState(false);
     let navigate = useNavigate();
@@ -37,7 +33,7 @@ const Seriados=()=> {
         talla5:'',
         metraje: '',
         color:'',
-        descripcion:'...',
+        descripcion:'',
         serie:'',
         garibaldi:false,
         contrafuerte:false,
@@ -48,7 +44,6 @@ const Seriados=()=> {
     const handleChangeSelect = (e) => {
         const name = e.target.name;
         const value =e.target.value;
-        setSerie(value);
         //Valido que serie se va insertar
         if(value==='nino'){
             setTallas(tallasNinoJson);  
@@ -90,13 +85,10 @@ const Seriados=()=> {
     const handleSubmit=(e)=>{
         e.preventDefault()
         setLoading(!loading);
-        const values = JSON.stringify(formSeriado)
-        alert('Estas seguro de enviar la infornacion?');
+        alert('Estas seguro de enviar la informacion?');
        
         //For Production
         fetch('https://backendkayoga-production.up.railway.app/postSeriados',{
-        //For Develop
-        //fetch('http://localhost:4000/postSeriados',{
             headers: {
                 'Content-Type': 'application/json'
               },
@@ -114,15 +106,7 @@ const Seriados=()=> {
           .catch(function(error) {
             console.log('Hubo un problema con la petición Fetch:' + error.message);
           });
-        /*.then(response => {console.log(response.json());setLoading(false);navigate('/')})
-        //Finamente tenemos la respuesta en formato objeto
-
-        .catch(()=>{ console.log('Algo salio mal al enviar el formulario');navigate('/E')})*/
-
-    }
-
-    
-
+   }
     return (
         
         <div style={{padding:16, margin:'auto', maxWidth:800}}>
@@ -162,6 +146,7 @@ const Seriados=()=> {
                             value={formSeriado.descripcion}
                             onChange={handleChange}
                             fullWidth
+                            required
                             multiline
                             type="string"
                             label="Descripcion"
@@ -175,12 +160,6 @@ const Seriados=()=> {
                         <FormControlLabel control={<Checkbox checked={formSeriado.contrafuerte} name="contrafuerte" onChange={handleChangeCheckBox} />} label="Contrafuerte" />
                     </Grid>
 
-
-                    {/* {validarStar&&(
-                        <Grid item xs={12}>
-                            <FormControlLabel control={<Checkbox  checked={formSeriado.etiquetas} name="etiquetas" onChange={handleChangeCheckBox} />} label="Etiquetas" />
-                        </Grid>
-                    )} */}
                     <Divider style={{width:'100%'}} />
                     <Divider style={{width:'100%'}} />
             {/* Seleccionar la serie                */}
@@ -191,7 +170,7 @@ const Seriados=()=> {
                         <Select
                             name="serie"
                             required
-                            value={serie}
+                            value={formSeriado.serie}
                             onChange={handleChangeSelect}
                             >
                             <MenuItem key={1} value='nino'>NIÑO</MenuItem>
@@ -202,7 +181,7 @@ const Seriados=()=> {
             {/* Seccion Agregar una talla mas */}
                     <Grid item xs={6}>
                         <Typography variant='body1' sx={{padding:1,fontWeight:'bold'}}>
-                            Selecciona la serie
+                            Puedes agregar Tallas
                         </Typography>
                         <FormControlLabel control={<Checkbox  checked={validarStar} onChange={handleChangeValidarStar} />} label="Agregar talla?" />
                     </Grid>
@@ -275,7 +254,7 @@ const Seriados=()=> {
                         >
                             Guardar
                         </Button>
-                        {/* Spinner                   */}
+                {/* Spinner                   */}
                     <Grid item xs={5}  style={{marginTop: 16 }}>
                         <HashLoader
                             color={'orange'}
@@ -293,4 +272,4 @@ const Seriados=()=> {
     )
   }
 
-  export default Seriados;
+  export default InsertNewLotePage;
