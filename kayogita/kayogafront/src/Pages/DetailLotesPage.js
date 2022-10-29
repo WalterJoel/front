@@ -6,7 +6,7 @@ import {Autocomplete,Divider,MenuItem,TextField,List,ListItem,ListItemText,Butto
 
 const DetailLotesPage =() => {
     //Obtengo el ID que viene de otro Page
-    let {idLote}  = useParams();
+    let {idLoteParam,serieParam}  = useParams();
     const [detalleLote,SetDetalleLote] = useState([]);
     const [aparadores,SetAparadores] = useState([]);
     const [talla,setTallas]=useState({});
@@ -21,8 +21,9 @@ const DetailLotesPage =() => {
     })
     //Funcion para la busqueda de modelos
     const peticionModelos=async()=>{
+        console.log('serie',serieParam);
         console.log('probando ', detalleLote.serie)
-        const url = 'http://localhost:4000/getAllModelosBySerieAndColor/'+ detalleLote.serie;
+        const url = 'http://localhost:4000/getAllModelosBySerieAndColor/'+ serieParam;
         await fetch(url,{
         //await fetch('https://backendkayoga-production.up.railway.app/getAllModelos',{
             headers: {
@@ -71,8 +72,8 @@ const DetailLotesPage =() => {
         */
         //For Develop
         //id lote param es el id que se envia cuando viene de lotesListPage
-        const url= 'http://localhost:4000/updateLoteById/' + idLote;
-        console.log('id param',idLote)
+        const url= 'http://localhost:4000/updateLoteById/' + idLoteParam;
+        console.log('id param',idLoteParam)
         fetch(url,{
             headers: {
                 'Content-Type': 'application/json'
@@ -95,7 +96,7 @@ const DetailLotesPage =() => {
     useEffect(() =>{
         peticionModelos();
         //Obtengo informacion sobre el lote
-        const url='https://backendkayoga-production.up.railway.app/getLoteById/'+idLote;
+        const url='https://backendkayoga-production.up.railway.app/getLoteById/'+idLoteParam;
         //const url='http://localhost:4000/getLoteById/'+idLote;
         fetch(url,{
             headers: {
@@ -107,6 +108,7 @@ const DetailLotesPage =() => {
                 const promesa = response.json();
                 //Extraigo el resultado de la promesa
                 promesa.then(function(loteResult){
+                    SetDetalleLote(loteResult[0]);
                     if(loteResult[0].serie==='nino'){
                         setTallas(tallasNinoJson);  
                     }
@@ -116,7 +118,6 @@ const DetailLotesPage =() => {
                     else{
                         setTallas(tallasVaronJson);  
                     }
-                    SetDetalleLote(loteResult[0]);
                 })
 
             }

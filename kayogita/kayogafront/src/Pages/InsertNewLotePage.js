@@ -136,7 +136,7 @@ const InsertNewLotePage=()=> {
                             onChange={handleChange}
                             fullWidth
                             type="string"
-                            label="Color"
+                            label="Color de Lona"
                             required
                         />
                     </Grid>
@@ -149,7 +149,7 @@ const InsertNewLotePage=()=> {
                             required
                             multiline
                             type="string"
-                            label="Descripcion"
+                            label="Descripcion / Tipo de Sarga"
                         />
                     </Grid>
                     {/* Seccion Checkbox  */}

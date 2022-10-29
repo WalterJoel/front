@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React,{useEffect,useState} from "react";
+import {useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 import {Paper,
@@ -17,51 +18,92 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
       fontSize: 18,
     },
   }));
-  
-
 const columns = [
-  { id: 'idlote', 
-    name:'idlote',
-    label: '#Lote', 
-    minWidth: 50 ,    
-    format: (value) => '# '+value ,
-
-  },
-  {
-    id: 'metraje',
-    name:'metraje',
-    label: 'Metraje',
-    minWidth: 100,
-    align: 'right',
-    format: (value) => value + ' metros ',
-  },
-
-  { id: 'color', name:'color', label: 'Color', minWidth: 100 },
-  {
-    id: 'fecha_creacion',
-    name:'fecha_creacion',
-    label: 'Fecha de Corte',
-    minWidth: 100,
-    align: 'right',
-    format: (value) => value.toLocaleString('America/Lima'),
-  },
-  {
-    id: 'ss',
-    label: 'Total de Pares',
-    minWidth: 50,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'idlote',
-    name:'acciones',
-    label: 'acciones',
-    minWidth: 50,
-    align: 'right',
-  }
+    { id: 'idmodelo', 
+      name:'modelo',
+      label: '#Código Modelo', 
+      minWidth: 50 ,    
+      format: (value) => '# '+value ,
+  
+    },
+    {
+      id: 'nombre_modelo',
+      name:'nombre_modelo',
+      label: 'Modelo',
+      minWidth: 100,
+      align: 'right',
+      format: (value) => value + ' metros ',
+    },
+    {
+        id: 'serie_modelo',
+        name:'serie_modelo',
+        label: 'Serie Modelo',
+        minWidth: 100,
+        align: 'right',
+        format: (value) => value + ' metros ',
+    },
+    {
+        id: 'tipo_modelo',
+        name:'tipo_modelo',
+        label: 'Tipo Modelo',
+        minWidth: 100,
+        align: 'right',
+        format: (value) => value + ' metros ',
+    },
+    {
+        id: 'idcolormodelo',
+        name:'idcolormodelo',
+        label: 'Color Modelo',
+        minWidth: 100,
+        align: 'right',
+    },
+    {
+        id: 'color_modelo',
+        name:'color_modelo',
+        label: 'ID Color Modelo',
+        minWidth: 100,
+        align: 'right',
+        format: (value) => value + ' metros ',
+    },
+    {
+        id: 'color_inserto',
+        name:'nombre_modelo',
+        label: 'Inserto',
+        minWidth: 100,
+        align: 'right',
+        format: (value) => value + ' metros ',
+    },
+    {
+        id: 'idinserto',
+        name:'idinserto',
+        label: 'ID Inserto',
+        minWidth: 100,
+        align: 'right'
+    },
+    {
+        id: 'modelo_inserto',
+        name:'modelo_inserto',
+        label: 'Modelo Inserto',
+        minWidth: 50,
+        align: 'right',
+    },
+    {
+        id: 'serie_inserto',
+        name:'serie_inserto',
+        label: 'Serie Inserto',
+        minWidth: 50,
+        align: 'right',
+    },
+    {
+      id: 'idmodelo',
+      name:'acciones',
+      label: 'acciones',
+      minWidth: 50,
+      align: 'right',
+    }
 ];
-
-const ListLotesPage=()=>{
+    
+const DetailLotesPage =() => {
     const [page, setPage] = React.useState(0);
     const [rows,setRows] = React.useState([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -73,28 +115,31 @@ const ListLotesPage=()=>{
     setRowsPerPage(+event.target.value);
     setPage(0);
     };
-
     
     useEffect(()=>{
-            console.log('entertaiment')
-        fetch('https://backendkayoga-production.up.railway.app/getLotesCortados',{
-        //For Develop
-        //Llamo a la API mediante un FETCH, me retorna una promesa
-        //fetch('http://localhost:4000/getLotesCortados',{
+        const url='https://backendkayoga-production.up.railway.app/getAllModelos';
+        //const url='http://localhost:4000/getLoteById/'+idLote;
+        fetch(url,{
             headers: {
                 'Content-Type': 'application/json'
-              },
+                },
         })
-        //Cuando la peticion finalize, hago q devuelva un json, tambien es una promesa
-        .then(response => response.json())
-        //Finamente tenemos la respuesta en formato objeto
-        //Utilizo reverse para mostrar primero los ultimos insertados
-        .then((lote)=>setRows(lote.reverse()))
+        .then(function(response){
+            if(response.ok){
+                const promesa = response.json();
+                //Extraigo el resultado de la promesa
+                promesa.then(function(modelosResult){
+                    setRows(modelosResult.reverse());
+                    console.log(modelosResult);
+                })
+            }
+            
+        })
         .catch(()=> console.log('Algo salio mal al requerir lotes cortados'));
 
     },[]);
     return(
-        <div style={{padding:16, margin:'auto', maxWidth:1000, backgroundColor:'#f1f1f1'}}>
+                <div style={{padding:16, margin:'auto', maxWidth:1500, backgroundColor:'#f1f1f1'}}>
         <Typography  variant='h5' style={{color:'#143975', margin:'1em' }}>
             Lotes Cortados
         </Typography>
@@ -163,8 +208,6 @@ const ListLotesPage=()=>{
         />
       </Paper>
       </div>
-
-    );
+    )
 }
-
-export default ListLotesPage;
+export default DetailLotesPage;
