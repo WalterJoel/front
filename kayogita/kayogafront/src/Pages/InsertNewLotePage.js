@@ -22,7 +22,6 @@ const InsertNewLotePage=()=> {
     const [validarStar,setValidarStar] = useState(false);
     let [loading, setLoading] = useState(false);
     let navigate = useNavigate();
-    const [serie,setSerie]=useState('');
     const [talla,setTallas]=useState({});
     const [formSeriado, setFormSeriado] = useState({
     
@@ -271,5 +270,4 @@ const InsertNewLotePage=()=> {
       </div>
     )
   }
-
   export default InsertNewLotePage;

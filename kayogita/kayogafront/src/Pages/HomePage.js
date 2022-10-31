@@ -27,7 +27,6 @@ import coverVideo from '../media/coverVideo.mp4';
 import './HomePage.css'
 
 export default function HomePage(props){
-
     return(
         <>
         <div style={{padding:16, margin:'auto', maxWidth:1000}}>
@@ -35,11 +34,6 @@ export default function HomePage(props){
             <Paper  style ={{padding:10, margin:10,borderRadius:20 }} >
                 <video id="vid"   className="video" src={ coverVideo } autoPlay loop muted   />
                 
-                {/* <CardMedia   
-                    style ={{borderRadius:20  }}
-                    component="img"
-                    height="220" 
-                    image={portadaImage} /> */}
             </Paper>    
             
             {/* Botones de accion */}

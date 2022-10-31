@@ -91,7 +91,6 @@ const DetailLotesPage =() => {
           .catch(function(error) {
             console.log('Hubo un problema con la petición Fetch:' + error.message);
           });     
-
     }
     useEffect(() =>{
         peticionModelos();
@@ -119,9 +118,7 @@ const DetailLotesPage =() => {
                         setTallas(tallasVaronJson);  
                     }
                 })
-
             }
-            
         })
         .catch(()=> console.log('Algo salio mal al requerir lotes cortados'));
 
@@ -271,8 +268,7 @@ const DetailLotesPage =() => {
 
             </Paper>
         </div>
-
+        
     )
-
 }
 export default DetailLotesPage;

@@ -18,7 +18,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
   
-
 const columns = [
   { id: 'idlote', 
     name:'idlote',
@@ -163,8 +162,6 @@ const ListLotesPage=()=>{
         />
       </Paper>
       </div>
-
     );
 }
-
 export default ListLotesPage;
